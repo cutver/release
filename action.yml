@@ -1,0 +1,48 @@
+name: "Cutver Release"
+description: "Automate SemVer bumping, changelog updates, and release notes extraction"
+author: "Rowell Urbaez"
+
+branding:
+  icon: "tag"
+  color: "blue"
+
+inputs:
+  command:
+    description: 'Command to execute: "release" (doctor + bump + changelog latest), "bump", "changelog", or "doctor"'
+    required: false
+    default: "release"
+  bump:
+    description: "SemVer level to increment (patch, minor, major, auto)"
+    required: false
+    default: "auto"
+  config:
+    description: "Path to cutver.toml or release.toml configuration file"
+    required: false
+  dry-run:
+    description: "Simulate the pipeline without modifying files or creating Git commits/tags"
+    required: false
+    default: "false"
+  skip-preflight:
+    description: "Preflight verification steps to skip (comma-separated or single)"
+    required: false
+  check-changelog:
+    description: "Validate CHANGELOG.md consistency with Git release tags (used in doctor)"
+    required: false
+    default: "true"
+  notes-file:
+    description: "File path to save the extracted release notes"
+    required: false
+    default: "RELEASE_NOTES.md"
+  template:
+    description: "Path to a MiniJinja template file to format release notes"
+    required: false
+
+outputs:
+  notes-path:
+    description: "Path to the generated release notes file"
+  release-notes:
+    description: "Raw markdown content of the latest changelog entry"
+
+runs:
+  using: "node24"
+  main: "dist/index.js"
