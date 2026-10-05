@@ -15,6 +15,10 @@ export class BumpCommand extends BaseCommand<void> {
             args.push('--dry-run');
         }
 
+        if (this.options.firstRelease) {
+            args.push('--first-release');
+        }
+
         if (this.options.skipPreflight) {
             for (const step of this.options.skipPreflight) {
                 if (step.trim()) {

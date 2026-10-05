@@ -137,6 +137,7 @@ Extracts or renders the latest release notes body without bumping versions:
 | :--- | :---: | :--- | :--- |
 | `command` | `string` | `"release"` | Pipeline execution mode: `"release"`, `"bump"`, `"changelog"`, or `"doctor"`. |
 | `bump` | `string` | `"auto"` | Bump strategy: `"auto"`, `"patch"`, `"minor"`, or `"major"`. |
+| `first-release` | `boolean` | `false` | Initialize the first release without incrementing the SemVer version. |
 | `config` | `string` | (discovered) | Path to `cutver.toml` or `release.toml`. Auto-discovered when omitted. |
 | `dry-run` | `boolean` | `false` | Simulates the bump pipeline without mutating files or Git repository. |
 | `skip-preflight` | `string` | (none) | Comma-separated list of preflight verification tasks to bypass. |
@@ -148,6 +149,9 @@ Extracts or renders the latest release notes body without bumping versions:
 
 | Output | Description | Example |
 | :--- | :--- | :--- |
+| `released` | Whether a new release was created (`true` or `false`). | `true` |
+| `version` | The SemVer version released, or empty if no release was cut. | `0.11.0` |
+| `tag` | The Git tag created, or empty if no release was cut. | `v0.11.0` |
 | `notes-path` | Absolute or relative path to the generated release notes file. | `RELEASE_NOTES.md` |
 | `release-notes` | The raw markdown content of the latest generated release notes. | `## ✨ What's Changed...` |
 

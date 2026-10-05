@@ -16,7 +16,8 @@ async function run(): Promise<void> {
             skipPreflight: skipSteps,
             checkChangelog: core.getBooleanInput('check-changelog'),
             notesFile: core.getInput('notes-file') || 'RELEASE_NOTES.md',
-            template: core.getInput('template') || undefined
+            template: core.getInput('template') || undefined,
+            firstRelease: core.getBooleanInput('first-release')
         };
 
         const runner = new CutverRunner(inputs.config);
@@ -24,12 +25,11 @@ async function run(): Promise<void> {
 
         const result = await orchestrator.execute(inputs);
 
-        if (result.notesPath) {
-            core.setOutput('notes-path', result.notesPath);
-        }
-        if (result.releaseNotes) {
-            core.setOutput('release-notes', result.releaseNotes);
-        }
+        core.setOutput('released', String(result.released));
+        if (result.version) core.setOutput('version', result.version);
+        if (result.tag) core.setOutput('tag', result.tag);
+        if (result.notesPath) core.setOutput('notes-path', result.notesPath);
+        if (result.releaseNotes) core.setOutput('release-notes', result.releaseNotes);
 
         core.info('Ejecución de cutver action finalizada.');
     } catch (error) {

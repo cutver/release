@@ -1,6 +1,6 @@
 name: "Cutver Release"
 description: "Automate SemVer bumping, changelog updates, and release notes extraction"
-author: "Rowell Urbaez"
+author: "cutver"
 
 branding:
   icon: "tag"
@@ -15,6 +15,10 @@ inputs:
     description: "SemVer level to increment (patch, minor, major, auto)"
     required: false
     default: "auto"
+  first-release:
+    description: "Initialize the first release without incrementing the SemVer version"
+    required: false
+    default: "false"
   config:
     description: "Path to cutver.toml or release.toml configuration file"
     required: false
@@ -38,6 +42,12 @@ inputs:
     required: false
 
 outputs:
+  released:
+    description: "Whether a new release was created (true or false)"
+  version:
+    description: "The SemVer version released (e.g. '0.11.0'), or empty if no release was cut"
+  tag:
+    description: "The Git tag created (e.g. 'v0.11.0'), or empty if no release was cut"
   notes-path:
     description: "Path to the generated release notes file"
   release-notes:
