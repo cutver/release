@@ -1,3 +1,4 @@
+import * as exec from '@actions/exec';
 import type { CutverRunner } from '../runner/cutver-runner';
 import type { ActionInputs } from '../types/options';
 import { DoctorCommand } from '../commands/doctor-command';
@@ -5,6 +6,9 @@ import { BumpCommand } from '../commands/bump-command';
 import { ChangelogCommand } from '../commands/changelog-command';
 
 export interface OrchestrationResult {
+    released: boolean;
+    version?: string;
+    tag?: string;
     notesPath?: string;
     releaseNotes?: string;
 }
@@ -13,7 +17,12 @@ export class ReleaseOrchestrator {
     constructor(private readonly runner: CutverRunner) { }
 
     async execute(inputs: ActionInputs): Promise<OrchestrationResult> {
-        const result: OrchestrationResult = {};
+        let preSha = '';
+        try {
+            preSha = (await exec.getExecOutput('git', ['rev-parse', 'HEAD'])).stdout.trim();
+        } catch {
+            // Not in a git repo or no commits yet
+        }
 
         if (inputs.command === 'doctor' || inputs.command === 'release') {
             const doctor = new DoctorCommand(this.runner, {
@@ -21,7 +30,9 @@ export class ReleaseOrchestrator {
                 checkChangelog: inputs.checkChangelog
             });
             await doctor.execute();
-            if (inputs.command === 'doctor') return result;
+            if (inputs.command === 'doctor') {
+                return { released: false };
+            }
         }
 
         if (inputs.command === 'bump' || inputs.command === 'release') {
@@ -29,11 +40,44 @@ export class ReleaseOrchestrator {
                 config: inputs.config,
                 level: inputs.bump,
                 dryRun: inputs.dryRun,
-                skipPreflight: inputs.skipPreflight
+                skipPreflight: inputs.skipPreflight,
+                firstRelease: inputs.firstRelease
             });
             await bump.execute();
-            if (inputs.command === 'bump') return result;
         }
+
+        let released = false;
+        let tag = '';
+        let version = '';
+
+        if (inputs.command === 'bump' || inputs.command === 'release') {
+            let postSha = '';
+            try {
+                postSha = (await exec.getExecOutput('git', ['rev-parse', 'HEAD'])).stdout.trim();
+            } catch {}
+
+            if (preSha && postSha && preSha !== postSha) {
+                released = true;
+                try {
+                    tag = (await exec.getExecOutput('git', ['describe', '--tags', '--match=v*.*.*', '--abbrev=0'])).stdout.trim();
+                    version = tag.replace(/^v/, '');
+                } catch {}
+            }
+
+            if (inputs.command === 'bump') {
+                return {
+                    released,
+                    ...(tag ? { tag } : {}),
+                    ...(version ? { version } : {})
+                };
+            }
+        }
+
+        const result: OrchestrationResult = {
+            released,
+            ...(tag ? { tag } : {}),
+            ...(version ? { version } : {})
+        };
 
         // 3. Extracción de Changelog (Modo changelog o Modo release completo)
         if (inputs.command === 'changelog' || inputs.command === 'release') {

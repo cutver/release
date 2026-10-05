@@ -13,6 +13,7 @@ export interface BumpOptions extends CommonCliOptions {
     level: BumpLevel;
     dryRun: boolean;
     skipPreflight?: string[] | undefined;
+    firstRelease?: boolean | undefined;
 }
 
 export interface ChangelogOptions extends CommonCliOptions {
@@ -29,6 +30,7 @@ export interface ActionInputs {
     checkChangelog: boolean;
     notesFile: string;
     template?: string | undefined;
+    firstRelease?: boolean | undefined;
 }
 
 export interface ICommand<T = void> {
