@@ -1,5 +1,5 @@
-name: "Cutver Release"
-description: "Automate SemVer bumping, changelog updates, and release notes extraction"
+name: "Cutver Release (deprecated)"
+description: "DEPRECATED: run `cutver bump --defer-publish` and `cutver publish` as steps instead. Automates SemVer bumping, changelog updates, and release notes extraction"
 author: "cutver"
 
 branding:

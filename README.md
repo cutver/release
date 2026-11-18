@@ -2,7 +2,18 @@
 
 # Cutver Release Orchestrator
 
-**Official GitHub Action to automate preflight validation, SemVer bumping, changelog updates, and release notes extraction.**
+> **Deprecated.**
+>
+> This action is no longer the recommended way to release with Cutver. It runs whatever published
+> `cutver` is on `PATH`, so it cannot cut a release that fixes the release path, and its command set has
+> no `publish` and no `--defer-publish`, which the two-phase release requires.
+>
+> It stays published and usable for existing workflows. For new ones, install the binary with
+> `cutver/setup` and run the commands: `cutver bump --defer-publish`, then
+> `cat RELEASE_NOTES.md | cutver publish --tag … --commit … --notes-file -`. The migration guide lives at
+> [`cutver/cutver` → docs/integrations/migrating-from-the-release-action.md](https://github.com/cutver/cutver/blob/main/docs/integrations/migrating-from-the-release-action.md).
+
+**GitHub Action to automate preflight validation, SemVer bumping, changelog updates, and release notes extraction.**
 
 [![Release](https://img.shields.io/github/v/release/cutver/release?logo=github&color=blue)](https://github.com/cutver/release/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
